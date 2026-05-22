@@ -173,11 +173,10 @@
         <nav aria-label="Setup steps">
           <ol class="dots" id="dots" style="list-style:none;padding:0;margin:0;">
             <li><button class="dot active" id="dot-1" onclick="goTo(1)" aria-label="Step 1: Download the Desktop App" aria-current="step"></button></li>
-            <li><button class="dot" id="dot-2" onclick="goTo(2)" aria-label="Step 2: Configure Connections"></button></li>
-            <li><button class="dot" id="dot-3" onclick="goTo(3)" aria-label="Step 3: Log In and Complete Setup"></button></li>
-            <li><button class="dot" id="dot-4" onclick="goTo(4)" aria-label="Step 4: Integrations and Skills"></button></li>
-            <li><button class="dot" id="dot-5" onclick="goTo(5)" aria-label="Step 5: Projects and Teams"></button></li>
-            <li><button class="dot" id="dot-6" onclick="goTo(6)" aria-label="Step 6: You're All Set"></button></li>
+            <li><button class="dot" id="dot-2" onclick="goTo(2)" aria-label="Step 2: Log In and Complete Setup"></button></li>
+            <li><button class="dot" id="dot-3" onclick="goTo(3)" aria-label="Step 3: Integrations and Skills"></button></li>
+            <li><button class="dot" id="dot-4" onclick="goTo(4)" aria-label="Step 4: Projects and Teams"></button></li>
+            <li><button class="dot" id="dot-5" onclick="goTo(5)" aria-label="Step 5: You're All Set"></button></li>
           </ol>
         </nav>
         <button id="toggle-btn" class="btn-secondary" onclick="toggleMode()"
@@ -189,7 +188,7 @@
       <!-- ── Step 1: Download ── -->
       <div id="panel-1" role="region" aria-labelledby="title-1">
         <div class="step-card">
-          <p class="step-eyebrow" aria-hidden="true">Step 1 of 6</p>
+          <p class="step-eyebrow" aria-hidden="true">Step 1 of 5</p>
           <h2 class="step-title" id="title-1">Download the Desktop App</h2>
           <p class="step-subtitle">Choose the installer that matches your computer.</p>
 
@@ -275,46 +274,11 @@
         </div>
       </div>
 
-      <!-- ── Step 2: Configure ── -->
+      <!-- ── Step 2: Log In + SSO ── -->
       <div id="panel-2" role="region" aria-labelledby="title-2" hidden>
         <div class="step-card">
-          <p class="step-eyebrow" aria-hidden="true">Step 2 of 6</p>
-          <h2 class="step-title" id="title-2">Configure Connections</h2>
-          <p class="step-subtitle">After launching the app, open the link below in your browser to configure it automatically.</p>
-
-          <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:1.5rem;">
-            <div class="url-box" style="flex:1;" id="config-url" aria-label="Configuration URL">holokai://config?payload=eyJtb2t1V2ViVXJsIjoiaHR0cHM6Ly9kZW1vLmhvbG9rYWkuYXBwIiwibW9rdUFwaVVybCI6Imh0dHBzOi8vZGVtby5ob2xva2FpLmFwcCIsImhvbG9BcGlVcmwiOiJodHRwczovL2hvbG8uZGVtby5ob2xva2FpLmFwcCJ9</div>
-            <button class="copy-btn" id="copy-config" onclick="copyText('config-url','copy-config')" aria-label="Copy configuration URL">
-              <svg width="12" height="12" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg> Copy
-            </button>
-          </div>
-
-          <div style="border-top:1px solid #f1f5f9;padding-top:1.25rem;">
-            <h3 style="font-size:15px;font-weight:600;color:#0f172a;margin:0 0 8px;">To Configure Manually</h3>
-            <p style="font-size:13px;color:#475569;margin:0 0 10px;">Go to <strong style="color:#0f172a;">Account → Settings → Connections</strong> and enter:</p>
-            <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
-              <div class="url-box" style="display:flex;gap:8px;align-items:center;"><span style="font-size:11px;color:#64748b;min-width:90px;flex-shrink:0;">Moku Web URL</span>https://demo.holokai.app</div>
-              <div class="url-box" style="display:flex;gap:8px;align-items:center;"><span style="font-size:11px;color:#64748b;min-width:90px;flex-shrink:0;">Moku API URL</span>https://demo.holokai.app</div>
-              <div class="url-box" style="display:flex;gap:8px;align-items:center;"><span style="font-size:11px;color:#64748b;min-width:90px;flex-shrink:0;">Holo API URL</span>https://holo.demo.holokai.app</div>
-            </div>
-            <p style="font-size:12px;color:#64748b;margin:0;">Click the <strong style="color:#0f172a;">checkmark (top right)</strong> to save.</p>
-          </div>
-        </div>
-        <div class="nav-row">
-          <button class="btn-back" onclick="goTo(1)">
-            <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-l"/></svg> Back
-          </button>
-          <button class="btn-next" onclick="goTo(3)">
-            Next <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-r"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- ── Step 3: Log In + SSO ── -->
-      <div id="panel-3" role="region" aria-labelledby="title-3" hidden>
-        <div class="step-card">
-          <p class="step-eyebrow" aria-hidden="true">Step 3 of 6</p>
-          <h2 class="step-title" id="title-3">Log In & Complete Setup</h2>
+          <p class="step-eyebrow" aria-hidden="true">Step 2 of 5</p>
+          <h2 class="step-title" id="title-2">Log In & Complete Setup</h2>
           <p class="step-subtitle">Sign in through the app to activate your account.</p>
           <ol style="list-style:none;padding:0;margin:0 0 1.25rem;display:flex;flex-direction:column;gap:10px;">
             <li style="display:flex;gap:12px;align-items:flex-start;">
@@ -331,22 +295,47 @@
             </li>
           </ol>
           <div class="note info" role="note">You're set up and ready to explore. The next steps walk you through the key features.</div>
+
+          <!-- Troubleshooting accordion -->
+          <details style="margin-top:1.25rem;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+            <summary style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;user-select:none;font-size:13px;font-weight:600;color:#475569;list-style:none;background:#f8fafc;">
+              <span>Troubleshooting connection issues?</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="flex-shrink:0;transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
+            </summary>
+            <div style="padding:1rem 1.25rem 1.25rem;border-top:1px solid #e2e8f0;">
+              <p style="font-size:13px;color:#475569;margin:0 0 .875rem;line-height:1.65;">If login isn't working, you may need to manually configure your connections. Launch the Holokai app, then open this link in your browser:</p>
+              <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:1rem;">
+                <div class="url-box" style="flex:1;font-size:11px;" id="config-url">holokai://config?payload=eyJtb2t1V2ViVXJsIjoiaHR0cHM6Ly9kZW1vLmhvbG9rYWkuYXBwIiwibW9rdUFwaVVybCI6Imh0dHBzOi8vZGVtby5ob2xva2FpLmFwcCIsImhvbG9BcGlVcmwiOiJodHRwczovL2hvbG8uZGVtby5ob2xva2FpLmFwcCJ9</div>
+                <button class="copy-btn" id="copy-config" onclick="copyText('config-url','copy-config')" aria-label="Copy configuration URL">
+                  <svg width="12" height="12" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg> Copy
+                </button>
+              </div>
+              <p style="font-size:13px;color:#475569;margin:0 0 6px;">Or configure manually:</p>
+              <p style="font-size:13px;color:#475569;margin:0 0 8px;">Go to <strong style="color:#0f172a;">Account → Settings → Connections</strong> and enter:</p>
+              <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px;">
+                <div class="url-box" style="display:flex;gap:8px;align-items:center;font-size:11px;"><span style="color:#64748b;min-width:90px;flex-shrink:0;">Moku Web URL</span>https://demo.holokai.app</div>
+                <div class="url-box" style="display:flex;gap:8px;align-items:center;font-size:11px;"><span style="color:#64748b;min-width:90px;flex-shrink:0;">Moku API URL</span>https://demo.holokai.app</div>
+                <div class="url-box" style="display:flex;gap:8px;align-items:center;font-size:11px;"><span style="color:#64748b;min-width:90px;flex-shrink:0;">Holo API URL</span>https://holo.demo.holokai.app</div>
+              </div>
+              <p style="font-size:12px;color:#64748b;margin:0;">Click the <strong style="color:#0f172a;">checkmark (top right)</strong> to save, then try logging in again.</p>
+            </div>
+          </details>
         </div>
         <div class="nav-row">
-          <button class="btn-back" onclick="goTo(2)">
+          <button class="btn-back" onclick="goTo(1)">
             <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-l"/></svg> Back
           </button>
-          <button class="btn-next" onclick="goTo(4)">
+          <button class="btn-next" onclick="goTo(3)">
             Next <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-r"/></svg>
           </button>
         </div>
       </div>
 
-      <!-- ── Step 4: Integrations & Skills ── -->
-      <div id="panel-4" role="region" aria-labelledby="title-4" hidden>
+      <!-- ── Step 3: Integrations & Skills ── -->
+      <div id="panel-3" role="region" aria-labelledby="title-3" hidden>
         <div class="step-card">
-          <p class="step-eyebrow" aria-hidden="true">Step 4 of 6</p>
-          <h2 class="step-title" id="title-4">Integrations & Skills</h2>
+          <p class="step-eyebrow" aria-hidden="true">Step 3 of 5</p>
+          <h2 class="step-title" id="title-3">Integrations & Skills</h2>
           <p class="step-subtitle">Connect your tools and extend what Holokai can do.</p>
           <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;">
             <div class="info-tile">
@@ -371,20 +360,20 @@
           <div class="note" role="note">Your admin may have pre-configured integrations and skills for your organization — check Settings to see what's available.</div>
         </div>
         <div class="nav-row">
-          <button class="btn-back" onclick="goTo(3)">
+          <button class="btn-back" onclick="goTo(2)">
             <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-l"/></svg> Back
           </button>
-          <button class="btn-next" onclick="goTo(5)">
+          <button class="btn-next" onclick="goTo(4)">
             Next <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-r"/></svg>
           </button>
         </div>
       </div>
 
-      <!-- ── Step 5: Projects & Teams ── -->
-      <div id="panel-5" role="region" aria-labelledby="title-5" hidden>
+      <!-- ── Step 4: Projects & Teams ── -->
+      <div id="panel-4" role="region" aria-labelledby="title-4" hidden>
         <div class="step-card">
-          <p class="step-eyebrow" aria-hidden="true">Step 5 of 6</p>
-          <h2 class="step-title" id="title-5">Projects & Teams</h2>
+          <p class="step-eyebrow" aria-hidden="true">Step 4 of 5</p>
+          <h2 class="step-title" id="title-4">Projects & Teams</h2>
           <p class="step-subtitle">Organize your work and collaborate with colleagues.</p>
           <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;">
             <div class="info-tile">
@@ -409,22 +398,22 @@
           <div class="note" role="note">Projects keep team workflows organized — each one maintains its own history and configuration.</div>
         </div>
         <div class="nav-row">
-          <button class="btn-back" onclick="goTo(4)">
+          <button class="btn-back" onclick="goTo(3)">
             <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-l"/></svg> Back
           </button>
-          <button class="btn-next" onclick="goTo(6)">
+          <button class="btn-next" onclick="goTo(5)">
             Finish <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-r"/></svg>
           </button>
         </div>
       </div>
 
-      <!-- ── Step 6: Done ── -->
-      <div id="panel-6" role="region" aria-labelledby="title-6" hidden>
+      <!-- ── Step 5: Done ── -->
+      <div id="panel-5" role="region" aria-labelledby="title-5" hidden>
         <div class="step-card" style="text-align:center;padding:2.5rem 2rem;">
           <div style="width:56px;height:56px;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;" aria-hidden="true">
             <svg width="24" height="24" style="color:#1d4ed8;" aria-hidden="true" focusable="false"><use href="#i-check"/></svg>
           </div>
-          <h2 class="step-title" id="title-6" style="margin-bottom:8px;">You're All Set!</h2>
+          <h2 class="step-title" id="title-5" style="margin-bottom:8px;">You're All Set!</h2>
           <p style="font-size:14px;color:#475569;margin:0 0 6px;line-height:1.65;max-width:380px;margin-left:auto;margin-right:auto;">
             Welcome to Holokai. You're ready to get started — explore the app and reach out to your admin with any questions.
           </p>
@@ -437,7 +426,7 @@
           </a>
         </div>
         <div class="nav-row" style="margin-top:0;">
-          <button class="btn-back" onclick="goTo(5)">
+          <button class="btn-back" onclick="goTo(4)">
             <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-l"/></svg> Back
           </button>
           <span></span>
@@ -452,11 +441,10 @@
   const ACCESS_CODE = 'Aloha2026';
   let current = 1;
   let showAll = false;
-  const TOTAL = 6;
+  const TOTAL = 5;
   const TITLES = [
     '',
     'Download the Desktop App',
-    'Configure Connections',
     'Log In and Complete Setup',
     'Integrations and Skills',
     'Projects and Teams',
