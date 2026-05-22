@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holokai — Setup Guide</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;background:#f8fafc;color:#0f172a;margin:0;}
+  h1,h2,h3{font-family:'Poppins',system-ui,sans-serif;}
+  *:focus-visible{outline:3px solid #2563eb;outline-offset:2px;border-radius:3px;}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+  /* Gate */
+  #gate{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;background:#0f172a;gap:1.75rem;}
+  .gate-card{width:100%;max-width:380px;background:#fff;border-radius:20px;padding:2rem 2rem 2.25rem;box-shadow:0 25px 60px rgba(0,0,0,0.5);}
+  .pw-input{width:100%;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:11px 42px 11px 14px;font-family:'Inter',sans-serif;font-size:14px;color:#0f172a;outline:none;transition:border-color .15s;}
+  .pw-input:focus{border-color:#1d4ed8;background:#fff;}
+  .pw-input.error{border-color:#dc2626;background:#fef2f2;}
+  .primary-btn{background:#1d4ed8;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;width:100%;transition:background .15s;}
+  .primary-btn:hover{background:#1e40af;}
+  .primary-btn:active{transform:scale(.98);}
+
+  /* App */
+  .topbar{background:#0f172a;border-bottom:1px solid rgba(255,255,255,0.08);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:10;}
+  .yt-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#fff;text-decoration:none;padding:6px 14px;border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;font-weight:500;transition:all .15s;}
+  .yt-link:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.5);}
+
+  /* Stepper */
+  .stepper-wrap{display:flex;flex-direction:column;align-items:center;padding:2.5rem 1.5rem 5rem;}
+  .stepper-inner{width:100%;max-width:580px;}
+
+  /* Progress dots — clickable */
+  .dots{display:flex;align-items:center;gap:5px;margin-bottom:2rem;}
+  .dot{width:8px;height:8px;border-radius:50%;background:#e2e8f0;transition:all .3s;padding:0;border:none;cursor:pointer;flex-shrink:0;}
+  .dot:focus-visible{outline:3px solid #2563eb;outline-offset:3px;}
+  .dot.active{width:24px;border-radius:4px;background:#1d4ed8;cursor:default;}
+  .dot.done{background:#1d4ed8;}
+
+  /* Cards */
+  .step-card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:1.75rem 2rem;margin-bottom:1.5rem;}
+  /* eyebrow bumped to #64748b for AA contrast (~5.9:1 on white) */
+  .step-eyebrow{font-size:11px;font-weight:600;color:#64748b;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;}
+  .step-title{font-size:22px;font-weight:700;color:#0f172a;letter-spacing:-.3px;margin:0 0 6px;}
+  .step-subtitle{font-size:14px;color:#64748b;margin:0 0 1.5rem;line-height:1.65;}
+
+  /* Platform tabs */
+  .platform-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #e2e8f0;margin-bottom:1.5rem;}
+  .tab-btn{padding:10px 8px;font-size:14px;font-weight:500;border:none;border-bottom:2px solid transparent;color:#475569;background:transparent;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;margin-bottom:-1px;display:flex;align-items:center;justify-content:center;gap:7px;}
+  .tab-btn:hover{color:#0f172a;}
+  .tab-btn.active{color:#1d4ed8;border-bottom-color:#1d4ed8;}
+
+  /* Download buttons */
+  .dl-btn{background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;transition:border-color .15s,box-shadow .15s;text-decoration:none;display:flex;align-items:center;gap:14px;padding:14px 16px;}
+  .dl-btn:hover{border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,0.07);}
+
+  /* Notes */
+  .note{background:#f0fdfa;border-left:3px solid #0d9488;border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:#134e4a;line-height:1.6;}
+  .note.warn{background:#fffbeb;border-left-color:#f59e0b;color:#78350f;}
+  .note.info{background:#eff6ff;border-left-color:#1d4ed8;color:#1e3a8a;}
+
+  /* URL / code */
+  .url-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;font-family:monospace;font-size:12px;color:#334155;word-break:break-all;line-height:1.6;}
+  .copy-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:#475569;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:4px 10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;flex-shrink:0;}
+  .copy-btn:hover{color:#1d4ed8;border-color:#1d4ed8;}
+
+  /* Nav */
+  .nav-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .btn-back{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:9px;font-size:14px;font-weight:500;background:#fff;border:1.5px solid #e2e8f0;color:#475569;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
+  .btn-back:hover{border-color:#94a3b8;color:#0f172a;}
+  .btn-next{display:inline-flex;align-items:center;gap:6px;padding:9px 22px;border-radius:9px;font-size:14px;font-weight:600;background:#1d4ed8;border:none;color:#fff;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
+  .btn-next:hover{background:#1e40af;}
+  .btn-next:active{transform:scale(.98);}
+
+  /* Info tiles */
+  .info-tile{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:1rem 1.125rem;display:flex;gap:12px;align-items:flex-start;}
+  .tile-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+  /* Secondary button */
+  .btn-secondary{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:14px;font-weight:500;background:#fff;border:1.5px solid #e2e8f0;color:#334155;cursor:pointer;font-family:'Inter',sans-serif;text-decoration:none;transition:all .15s;}
+  .btn-secondary:hover{border-color:#94a3b8;color:#0f172a;}
+</style>
+</head>
+<body>
+
+<!-- ── Decorative SVG sprites (aria-hidden on all use sites) ── -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true" focusable="false">
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></symbol>
+  <symbol id="i-arrow-l" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></symbol>
+  <symbol id="i-arrow-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+  <symbol id="i-dl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+  <symbol id="i-unplug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 5 3-3"/><path d="m2 22 3-3"/><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/><path d="M7.5 13.5 10 11"/><path d="M10.5 16.5 13 14"/><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></symbol>
+</svg>
+
+<!-- ── Logo paths (reused in gate + topbar) ── -->
+<svg style="display:none" aria-hidden="true" focusable="false"><defs><g id="hk-logo-paths">
+  <path d="M6.67983 86.8701C6.63983 86.4701 6.66984 86.1501 6.79984 85.7701C7.40984 84.0601 9.36983 80.9101 10.3298 79.1101C22.2298 56.6401 35.0498 34.5101 46.4498 11.7801C48.3398 8.02006 50.2498 4.24006 51.4298 0.18006C51.3998 -0.05994 51.8698 -0.00994004 51.9898 0.03006C52.2698 0.12006 54.4298 4.62006 54.7298 5.27006C57.7298 11.7701 59.1398 19.0601 59.4198 26.4901L59.3098 85.5501C59.0798 86.1901 58.5998 86.3501 57.9698 86.4301C55.8298 86.6801 49.9198 86.6801 47.7698 86.4301C46.6198 86.3001 46.4198 85.8501 46.3198 84.7701C45.9798 81.0301 46.8098 76.4101 46.3398 72.7901C46.2898 72.4101 46.2598 72.1201 45.8898 71.9101L29.8198 71.7901L28.5998 72.1801L21.7098 85.3801C21.4898 85.7201 20.3798 86.8601 20.0898 86.8601H6.67983V86.8701ZM46.3298 39.0201L45.4698 39.3801C42.3498 45.9101 38.3198 52.0301 35.1298 58.5101C34.9798 58.8201 33.8498 60.7301 34.6898 60.7301H45.7698C45.7698 60.7301 46.3198 60.2201 46.3198 60.1801V39.0301L46.3298 39.0201ZM94.3198 93.1001C81.7998 94.6601 69.4698 98.4101 57.0098 100.32C46.8598 101.87 35.6298 102.26 25.3998 101.27C18.0298 100.56 10.9198 98.4901 3.61983 97.3501C2.61983 97.1901 1.30983 96.9001 0.359835 96.8401C0.059835 96.8201 -0.070165 96.8201 0.029835 97.1701C0.219835 97.8001 2.18984 100.39 2.72984 101.12C13.5598 115.89 27.0998 120.99 45.2998 118.52C51.9098 117.62 57.7898 115.79 64.6098 116.11C74.2298 116.56 84.0298 121.35 93.5098 117.56C100.76 114.65 105.3 105.92 110.24 100.17C112.2 97.8901 115.26 95.6401 116.89 93.5301C117.06 93.3101 117.32 93.2501 117.22 92.8701C109.76 91.6501 101.81 92.1801 94.3198 93.1201V93.1001ZM70.4598 23.4001L70.4898 84.9701C70.6098 85.8001 70.8098 86.2801 71.6998 86.4201C73.2698 86.6701 80.0698 86.6701 81.6398 86.4201C82.5498 86.2801 82.8998 85.6701 82.8798 84.7801L82.8598 23.1901C82.7698 22.7201 82.1198 22.0601 81.6398 21.9701C80.6198 21.7801 72.6898 21.7901 71.7198 22.0101C71.1398 22.1401 70.4198 22.7601 70.4398 23.3901L70.4598 23.4001Z"/>
+  <path d="M221.56 24V104.95H205.32V70.5H170.64V104.95H154.4V24H170.64V57.29H205.32V24H221.56Z"/>
+  <path d="M261.23 100.43C254.89 96.88 249.87 91.95 246.15 85.64C242.44 79.34 240.58 72.21 240.58 64.24C240.58 56.27 242.44 49.26 246.15 42.96C249.86 36.66 254.89 31.73 261.23 28.17C267.57 24.61 274.53 22.83 282.11 22.83C289.69 22.83 296.74 24.61 303.04 28.17C309.34 31.73 314.33 36.66 318 42.96C321.67 49.26 323.51 56.36 323.51 64.24C323.51 72.12 321.67 79.34 318 85.64C314.33 91.94 309.32 96.87 302.98 100.43C296.64 103.99 289.68 105.77 282.1 105.77C274.52 105.77 267.56 103.99 261.22 100.43H261.23ZM294.98 87.96C298.69 85.76 301.59 82.61 303.68 78.51C305.77 74.41 306.81 69.66 306.81 64.24C306.81 58.82 305.77 54.09 303.68 50.03C301.59 45.97 298.69 42.86 294.98 40.69C291.27 38.53 286.98 37.44 282.11 37.44C277.24 37.44 272.93 38.52 269.18 40.69C265.43 42.86 262.51 45.97 260.42 50.03C258.33 54.09 257.29 58.83 257.29 64.24C257.29 69.65 258.33 74.41 260.42 78.51C262.51 82.61 265.43 85.76 269.18 87.96C272.93 90.16 277.24 91.27 282.11 91.27C286.98 91.27 291.27 90.17 294.98 87.96Z"/>
+  <path d="M358.77 92.08H385.45V104.95H342.54V24H358.78V92.08H358.77Z"/>
+  <path d="M419.42 100.43C413.08 96.88 408.06 91.95 404.34 85.64C400.63 79.34 398.77 72.21 398.77 64.24C398.77 56.27 400.63 49.26 404.34 42.96C408.05 36.66 413.08 31.73 419.42 28.17C425.76 24.61 432.72 22.83 440.3 22.83C447.88 22.83 454.93 24.61 461.23 28.17C467.53 31.73 472.52 36.66 476.19 42.96C479.86 49.26 481.7 56.36 481.7 64.24C481.7 72.12 479.86 79.34 476.19 85.64C472.52 91.94 467.51 96.87 461.17 100.43C454.83 103.99 447.87 105.77 440.29 105.77C432.71 105.77 425.75 103.99 419.41 100.43H419.42ZM453.18 87.96C456.89 85.76 459.79 82.61 461.88 78.51C463.97 74.41 465.01 69.66 465.01 64.24C465.01 58.82 463.97 54.09 461.88 50.03C459.79 45.97 456.89 42.86 453.18 40.69C449.47 38.53 445.18 37.44 440.31 37.44C435.44 37.44 431.13 38.52 427.38 40.69C423.63 42.86 420.71 45.97 418.62 50.03C416.53 54.09 415.49 58.83 415.49 64.24C415.49 69.65 416.53 74.41 418.62 78.51C420.71 82.61 423.63 85.76 427.38 87.96C431.13 90.16 435.44 91.27 440.31 91.27C445.18 91.27 449.47 90.17 453.18 87.96Z"/>
+  <path d="M546.42 104.95L516.96 68.88V104.95H500.72V24H516.96V60.3L546.42 24H566.02L532.62 64.13L566.95 104.96H546.42V104.95Z"/>
+  <path d="M634.22 89.53H601.98L596.65 104.96H579.6L608.71 23.89H627.62L656.73 104.96H639.56L634.22 89.53ZM629.81 76.54L618.1 42.67L606.39 76.54H629.82H629.81Z"/>
+  <path d="M690.82 24V104.95H674.58V24H690.82Z"/>
+</g></defs></svg>
+
+<!-- ════════════ GATE ════════════ -->
+<div id="gate">
+  <svg width="140" height="24" viewBox="0 0 691 120" fill="white" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Holokai" focusable="false">
+    <use href="#hk-logo-paths"/>
+  </svg>
+
+  <div class="gate-card">
+    <!-- Visible h1 for gate screen -->
+    <h1 style="font-size:17px;font-weight:600;color:#0f172a;margin:0 0 4px;">Setup Guide</h1>
+    <p style="font-size:13px;color:#64748b;margin:0 0 1.5rem;">Enter your access code to continue.</p>
+
+    <!-- Labelled password field -->
+    <div style="position:relative;margin-bottom:10px;">
+      <label for="pw" class="sr-only">Access code</label>
+      <input type="password" id="pw" class="pw-input" placeholder="Access code"
+             autocomplete="current-password" aria-describedby="pw-err"
+             onkeydown="if(event.key==='Enter')unlock()">
+      <button onclick="togglePw()" aria-label="Show or hide access code"
+              style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;display:flex;padding:4px;">
+        <svg id="eye-icon" width="16" height="16" aria-hidden="true" focusable="false"><use href="#i-eye"/></svg>
+      </button>
+    </div>
+    <p id="pw-err" role="alert" aria-live="assertive"
+       style="font-size:12px;color:#dc2626;margin:0 0 10px;display:none;">Incorrect code — try again.</p>
+    <button class="primary-btn" onclick="unlock()">Continue</button>
+  </div>
+</div>
+
+<!-- ════════════ APP ════════════ -->
+<div id="app" style="display:none;min-height:100vh;flex-direction:column;" aria-label="Holokai Setup Guide">
+
+  <!-- Visually hidden h1 so heading hierarchy starts correctly -->
+  <h1 class="sr-only">Holokai Setup Guide</h1>
+
+  <!-- aria-live region: announces step changes to screen readers -->
+  <div id="step-announce" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+  <!-- aria-live region: announces copy feedback -->
+  <div id="copy-announce" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+  <div class="topbar">
+    <svg width="100" height="17" viewBox="0 0 691 120" fill="white" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Holokai" focusable="false">
+      <use href="#hk-logo-paths"/>
+    </svg>
+    <a href="https://www.youtube.com/playlist?list=PLhIHVtcmgyJm2dHxH0x8uQp4ZkGnRwmzU"
+       target="_blank" rel="noopener noreferrer" class="yt-link"
+       aria-label="Reference Videos (opens in new tab)">
+      <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-play"/></svg>
+      Reference Videos
+    </a>
+  </div>
+
+  <div class="stepper-wrap">
+    <div class="stepper-inner">
+
+      <!-- Dots + show-all toggle -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;">
+        <nav aria-label="Setup steps">
+          <ol class="dots" id="dots" style="list-style:none;padding:0;margin:0;">
+            <li><button class="dot active" id="dot-1" onclick="goTo(1)" aria-label="Step 1: Download the Desktop App" aria-current="step"></button></li>
+            <li><button class="dot" id="dot-2" onclick="goTo(2)" aria-label="Step 2: Configure Connections"></button></li>
+            <li><button class="dot" id="dot-3" onclick="goTo(3)" aria-label="Step 3: Log In and Complete Setup"></button></li>
+            <li><button class="dot" id="dot-4" onclick="goTo(4)" aria-label="Step 4: Integrations and Skills"></button></li>
+            <li><button class="dot" id="dot-5" onclick="goTo(5)" aria-label="Step 5: Projects and Teams"></button></li>
+            <li><button class="dot" id="dot-6" onclick="goTo(6)" aria-label="Step 6: You're All Set"></button></li>
+          </ol>
+        </nav>
+        <button id="toggle-btn" class="btn-secondary" onclick="toggleMode()"
+                style="padding:6px 14px;font-size:12px;" aria-label="Show all steps">
+          Show All
+        </button>
+      </div>
+
+      <!-- ── Step 1: Download ── -->
+      <div id="panel-1" role="region" aria-labelledby="title-1">
+        <div class="step-card">
+          <p class="step-eyebrow" aria-hidden="true">Step 1 of 6</p>
+          <h2 class="step-title" id="title-1">Download the Desktop App</h2>
+          <p class="step-subtitle">Choose the installer that matches your computer.</p>
+
+          <!-- role="tablist" for platform selector -->
+          <div class="platform-tabs" role="tablist" aria-label="Operating system" id="ptabs">
+            <button class="tab-btn active" role="tab" id="tab-mac" aria-selected="true" aria-controls="p-mac"
+                    onclick="switchPlatform('mac',this)">
+              <svg width="13" height="16" viewBox="0 0 814 1000" fill="currentColor" aria-hidden="true" focusable="false"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z"/></svg>
+              Mac
+            </button>
+            <button class="tab-btn" role="tab" id="tab-win" aria-selected="false" aria-controls="p-win"
+                    onclick="switchPlatform('win',this)">
+              <svg width="14" height="14" viewBox="0 0 88 88" fill="currentColor" aria-hidden="true" focusable="false"><path d="M0 12.402l35.687-4.86.016 34.423-35.67.203zm35.67 33.529l.028 34.453L.028 75.48.026 45.7zm4.326-39.025L87.314 0v41.527l-47.318.376zm47.329 39.349l-.011 41.34-47.318-6.678-.066-34.739z"/></svg>
+              Windows
+            </button>
+          </div>
+
+          <div id="p-mac" role="tabpanel" aria-labelledby="tab-mac">
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;">
+              <a class="dl-btn" href="https://drive.google.com/file/d/1zzXWwyYNOiaTEW-Y81JawvXS0UqQ_RnZ/view?usp=sharing"
+                 target="_blank" rel="noopener noreferrer"
+                 aria-label="Download Mac Apple Silicon installer (opens in new tab)">
+                <div style="width:40px;height:40px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" aria-hidden="true">
+                  <svg width="16" height="20" viewBox="0 0 814 1000" fill="#1d4ed8" aria-hidden="true" focusable="false"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z"/></svg>
+                </div>
+                <div style="flex:1;">
+                  <div style="font-size:14px;font-weight:600;color:#0f172a;">Mac — Apple Silicon</div>
+                  <div style="font-size:12px;color:#64748b;margin-top:1px;">M1 / M2 / M3 chips</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:5px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:7px;padding:6px 10px;flex-shrink:0;" aria-hidden="true">
+                  <svg width="15" height="15" style="color:#1d4ed8;" aria-hidden="true" focusable="false"><use href="#i-dl"/></svg>
+                  <span style="font-size:12px;font-weight:600;color:#1d4ed8;">Download</span>
+                </div>
+              </a>
+              <a class="dl-btn" href="https://drive.google.com/file/d/14ZUWW_cHuXlDUpRxj0LqkqgoNirS0Jpu/view?usp=sharing"
+                 target="_blank" rel="noopener noreferrer"
+                 aria-label="Download Mac Intel installer (opens in new tab)">
+                <div style="width:40px;height:40px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" aria-hidden="true">
+                  <svg width="16" height="20" viewBox="0 0 814 1000" fill="#1d4ed8" aria-hidden="true" focusable="false"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z"/></svg>
+                </div>
+                <div style="flex:1;">
+                  <div style="font-size:14px;font-weight:600;color:#0f172a;">Mac — Intel</div>
+                  <div style="font-size:12px;color:#64748b;margin-top:1px;">Intel processor</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:5px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:7px;padding:6px 10px;flex-shrink:0;" aria-hidden="true">
+                  <svg width="15" height="15" style="color:#1d4ed8;" aria-hidden="true" focusable="false"><use href="#i-dl"/></svg>
+                  <span style="font-size:12px;font-weight:600;color:#1d4ed8;">Download</span>
+                </div>
+              </a>
+            </div>
+            <div class="note" role="note">
+              <strong>Not sure which Mac you have?</strong> Apple menu → <strong>About This Mac</strong>. Look for <strong>Chip</strong> (Apple Silicon) or <strong>Processor</strong> (Intel).
+            </div>
+          </div>
+
+          <div id="p-win" role="tabpanel" aria-labelledby="tab-win" hidden>
+            <div style="margin-bottom:1rem;">
+              <a class="dl-btn" href="https://drive.google.com/file/d/10Vzt-8B8EGnbeCwAp2XmPtvnXKjtNTFm/view?usp=sharing"
+                 target="_blank" rel="noopener noreferrer"
+                 aria-label="Download Windows installer (opens in new tab)">
+                <div style="width:40px;height:40px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 88 88" fill="#1d4ed8" aria-hidden="true" focusable="false"><path d="M0 12.402l35.687-4.86.016 34.423-35.67.203zm35.67 33.529l.028 34.453L.028 75.48.026 45.7zm4.326-39.025L87.314 0v41.527l-47.318.376zm47.329 39.349l-.011 41.34-47.318-6.678-.066-34.739z"/></svg>
+                </div>
+                <div style="flex:1;">
+                  <div style="font-size:14px;font-weight:600;color:#0f172a;">Windows Installer</div>
+                  <div style="font-size:12px;color:#64748b;margin-top:1px;">.exe — all versions</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:5px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:7px;padding:6px 10px;flex-shrink:0;" aria-hidden="true">
+                  <svg width="15" height="15" style="color:#1d4ed8;" aria-hidden="true" focusable="false"><use href="#i-dl"/></svg>
+                  <span style="font-size:12px;font-weight:600;color:#1d4ed8;">Download</span>
+                </div>
+              </a>
+            </div>
+            <div class="note warn" role="note">
+              <strong>Seeing a Google Drive warning?</strong> That's normal. Click <strong>Download anyway</strong>, then <strong>More info → Run anyway</strong> when Windows prompts you.
+            </div>
+          </div>
+        </div>
+        <div class="nav-row"><span></span>
+          <button class="btn-next" onclick="goTo(2)">
+            Next <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-r"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Step 2: Configure ── -->
+      <div id="panel-2" role="region" aria-labelledby="title-2" hidden>
+        <div class="step-card">
+          <p class="step-eyebrow" aria-hidden="true">Step 2 of 6</p>
+          <h2 class="step-title" id="title-2">Configure Connections</h2>
+          <p class="step-subtitle">After launching the app, open the link below in your browser to configure it automatically.</p>
+
+          <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:1.5rem;">
+            <div class="url-box" style="flex:1;" id="config-url" aria-label="Configuration URL">holokai://config?payload=eyJtb2t1V2ViVXJsIjoiaHR0cHM6Ly9kZW1vLmhvbG9rYWkuYXBwIiwibW9rdUFwaVVybCI6Imh0dHBzOi8vZGVtby5ob2xva2FpLmFwcCIsImhvbG9BcGlVcmwiOiJodHRwczovL2hvbG8uZGVtby5ob2xva2FpLmFwcCJ9</div>
+            <button class="copy-btn" id="copy-config" onclick="copyText('config-url','copy-config')" aria-label="Copy configuration URL">
+              <svg width="12" height="12" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg> Copy
+            </button>
+          </div>
+
+          <div style="border-top:1px solid #f1f5f9;padding-top:1.25rem;">
+            <h3 style="font-size:15px;font-weight:600;color:#0f172a;margin:0 0 8px;">To Configure Manually</h3>
+            <p style="font-size:13px;color:#475569;margin:0 0 10px;">Go to <strong style="color:#0f172a;">Account → Settings → Connections</strong> and enter:</p>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+              <div class="url-box" style="display:flex;gap:8px;align-items:center;"><span style="font-size:11px;color:#64748b;min-width:90px;flex-shrink:0;">Moku Web URL</span>https://demo.holokai.app</div>
+              <div class="url-box" style="display:flex;gap:8px;align-items:center;"><span style="font-size:11px;color:#64748b;min-width:90px;flex-shrink:0;">Moku API URL</span>https://demo.holokai.app</div>
+              <div class="url-box" style="display:flex;gap:8px;align-items:center;"><span style="font-size:11px;color:#64748b;min-width:90px;flex-shrink:0;">Holo API URL</span>https://holo.demo.holokai.app</div>
+            </div>
+            <p style="font-size:12px;color:#64748b;margin:0;">Click the <strong style="color:#0f172a;">checkmark (top right)</strong> to save.</p>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goTo(1)">
+            <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-l"/></svg> Back
+          </button>
+          <button class="btn-next" onclick="goTo(3)">
+            Next <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-r"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Step 3: Log In + SSO ── -->
+      <div id="panel-3" role="region" aria-labelledby="title-3" hidden>
+        <div class="step-card">
+          <p class="step-eyebrow" aria-hidden="true">Step 3 of 6</p>
+          <h2 class="step-title" id="title-3">Log In & Complete Setup</h2>
+          <p class="step-subtitle">Sign in through the app to activate your account.</p>
+          <ol style="list-style:none;padding:0;margin:0 0 1.25rem;display:flex;flex-direction:column;gap:10px;">
+            <li style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:24px;height:24px;border-radius:50%;background:#eff6ff;border:1.5px solid #bfdbfe;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:11px;font-weight:700;color:#1d4ed8;" aria-hidden="true">1</div>
+              <p style="font-size:14px;color:#334155;margin:0;line-height:1.65;">Click <strong style="color:#0f172a;">Login</strong> in the center of the Holokai app (or <strong style="color:#0f172a;">Account → Login</strong> bottom left). Your browser will open the Admin Console.</p>
+            </li>
+            <li style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:24px;height:24px;border-radius:50%;background:#eff6ff;border:1.5px solid #bfdbfe;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:11px;font-weight:700;color:#1d4ed8;" aria-hidden="true">2</div>
+              <p style="font-size:14px;color:#334155;margin:0;line-height:1.65;">Click <strong style="color:#0f172a;">Continue with Microsoft</strong> and sign in with your company account.</p>
+            </li>
+            <li style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:24px;height:24px;border-radius:50%;background:#eff6ff;border:1.5px solid #bfdbfe;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:11px;font-weight:700;color:#1d4ed8;" aria-hidden="true">3</div>
+              <p style="font-size:14px;color:#334155;margin:0;line-height:1.65;">When prompted, click <strong style="color:#0f172a;">Open Holokai Desktop</strong>. You'll be logged in automatically — close the browser tab.</p>
+            </li>
+          </ol>
+          <div class="note info" role="note">You're set up and ready to explore. The next steps walk you through the key features.</div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goTo(2)">
+            <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-l"/></svg> Back
+          </button>
+          <button class="btn-next" onclick="goTo(4)">
+            Next <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-r"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Step 4: Integrations & Skills ── -->
+      <div id="panel-4" role="region" aria-labelledby="title-4" hidden>
+        <div class="step-card">
+          <p class="step-eyebrow" aria-hidden="true">Step 4 of 6</p>
+          <h2 class="step-title" id="title-4">Integrations & Skills</h2>
+          <p class="step-subtitle">Connect your tools and extend what Holokai can do.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;">
+            <div class="info-tile">
+              <div class="tile-icon" style="background:#eff6ff;" aria-hidden="true">
+                <svg width="18" height="18" style="color:#1d4ed8;" aria-hidden="true" focusable="false"><use href="#i-unplug"/></svg>
+              </div>
+              <div>
+                <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 3px;">Integrations</p>
+                <p style="font-size:13px;color:#475569;margin:0;line-height:1.6;">Connect external tools like Slack, Jira, or your internal systems. Find integrations under <strong style="color:#0f172a;">Settings → Integrations</strong>.</p>
+              </div>
+            </div>
+            <div class="info-tile">
+              <div class="tile-icon" style="background:#eff6ff;" aria-hidden="true">
+                <svg width="18" height="18" style="color:#1d4ed8;" aria-hidden="true" focusable="false"><use href="#i-zap"/></svg>
+              </div>
+              <div>
+                <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 3px;">Skills</p>
+                <p style="font-size:13px;color:#475569;margin:0;line-height:1.6;">Skills are pre-built capabilities that give Holokai specialized knowledge for your workflows. Enable and manage them under <strong style="color:#0f172a;">Settings → Skills</strong>.</p>
+              </div>
+            </div>
+          </div>
+          <div class="note" role="note">Your admin may have pre-configured integrations and skills for your organization — check Settings to see what's available.</div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goTo(3)">
+            <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-l"/></svg> Back
+          </button>
+          <button class="btn-next" onclick="goTo(5)">
+            Next <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-r"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Step 5: Projects & Teams ── -->
+      <div id="panel-5" role="region" aria-labelledby="title-5" hidden>
+        <div class="step-card">
+          <p class="step-eyebrow" aria-hidden="true">Step 5 of 6</p>
+          <h2 class="step-title" id="title-5">Projects & Teams</h2>
+          <p class="step-subtitle">Organize your work and collaborate with colleagues.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;">
+            <div class="info-tile">
+              <div class="tile-icon" style="background:#eff6ff;" aria-hidden="true">
+                <svg width="18" height="18" style="color:#1d4ed8;" aria-hidden="true" focusable="false"><use href="#i-folder"/></svg>
+              </div>
+              <div>
+                <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 3px;">Projects</p>
+                <p style="font-size:13px;color:#475569;margin:0;line-height:1.6;">Projects give you a dedicated space with shared context, memory, and settings. Create one from the sidebar or join an existing team project.</p>
+              </div>
+            </div>
+            <div class="info-tile">
+              <div class="tile-icon" style="background:#eff6ff;" aria-hidden="true">
+                <svg width="18" height="18" style="color:#1d4ed8;" aria-hidden="true" focusable="false"><use href="#i-users"/></svg>
+              </div>
+              <div>
+                <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 3px;">Adding Your Team</p>
+                <p style="font-size:13px;color:#475569;margin:0;line-height:1.6;">Invite teammates via <strong style="color:#0f172a;">Project Settings → Members</strong>. Members share the same integrations, skills, and context within that project.</p>
+              </div>
+            </div>
+          </div>
+          <div class="note" role="note">Projects keep team workflows organized — each one maintains its own history and configuration.</div>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goTo(4)">
+            <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-l"/></svg> Back
+          </button>
+          <button class="btn-next" onclick="goTo(6)">
+            Finish <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-r"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Step 6: Done ── -->
+      <div id="panel-6" role="region" aria-labelledby="title-6" hidden>
+        <div class="step-card" style="text-align:center;padding:2.5rem 2rem;">
+          <div style="width:56px;height:56px;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;" aria-hidden="true">
+            <svg width="24" height="24" style="color:#1d4ed8;" aria-hidden="true" focusable="false"><use href="#i-check"/></svg>
+          </div>
+          <h2 class="step-title" id="title-6" style="margin-bottom:8px;">You're All Set!</h2>
+          <p style="font-size:14px;color:#475569;margin:0 0 6px;line-height:1.65;max-width:380px;margin-left:auto;margin-right:auto;">
+            Welcome to Holokai. You're ready to get started — explore the app and reach out to your admin with any questions.
+          </p>
+          <p style="font-size:13px;color:#94a3b8;margin:0 0 1.75rem;">You can close this tab when you're done.</p>
+          <a href="https://www.youtube.com/playlist?list=PLhIHVtcmgyJm2dHxH0x8uQp4ZkGnRwmzU"
+             target="_blank" rel="noopener noreferrer" class="btn-secondary" style="margin:0 auto;"
+             aria-label="Watch Reference Videos (opens in new tab)">
+            <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-play"/></svg>
+            Watch Reference Videos
+          </a>
+        </div>
+        <div class="nav-row" style="margin-top:0;">
+          <button class="btn-back" onclick="goTo(5)">
+            <svg width="14" height="14" aria-hidden="true" focusable="false"><use href="#i-arrow-l"/></svg> Back
+          </button>
+          <span></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const ACCESS_CODE = 'Aloha2026';
+  let current = 1;
+  let showAll = false;
+  const TOTAL = 6;
+  const TITLES = [
+    '',
+    'Download the Desktop App',
+    'Configure Connections',
+    'Log In and Complete Setup',
+    'Integrations and Skills',
+    'Projects and Teams',
+    "You're All Set"
+  ];
+
+  document.getElementById('pw').addEventListener('input', () => {
+    document.getElementById('pw').classList.remove('error');
+    document.getElementById('pw-err').style.display = 'none';
+  });
+
+  function unlock() {
+    if (document.getElementById('pw').value.trim() === ACCESS_CODE) {
+      document.getElementById('gate').style.display = 'none';
+      const app = document.getElementById('app');
+      app.style.display = 'flex';
+      const firstHeading = app.querySelector('h2');
+      if (firstHeading) { firstHeading.setAttribute('tabindex', '-1'); firstHeading.focus(); }
+    } else {
+      document.getElementById('pw').classList.add('error');
+      const err = document.getElementById('pw-err');
+      err.style.display = 'block';
+      document.getElementById('pw').focus();
+    }
+  }
+
+  function togglePw() {
+    const inp = document.getElementById('pw');
+    const use = document.querySelector('#eye-icon use');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    use.setAttribute('href', inp.type === 'text' ? '#i-eye-off' : '#i-eye');
+  }
+
+  function toggleMode() {
+    showAll = !showAll;
+    const btn = document.getElementById('toggle-btn');
+    const dots = document.getElementById('dots');
+
+    if (showAll) {
+      // Show all panels, hide nav rows, dim dots
+      for (let i = 1; i <= TOTAL; i++) {
+        document.getElementById('panel-' + i).hidden = false;
+        const navRow = document.getElementById('panel-' + i).querySelector('.nav-row');
+        if (navRow) navRow.style.display = 'none';
+      }
+      dots.style.opacity = '0.35';
+      dots.style.pointerEvents = 'none';
+      btn.textContent = 'Step by Step';
+      btn.setAttribute('aria-label', 'Switch to step by step view');
+      document.getElementById('step-announce').textContent = 'Showing all steps';
+    } else {
+      // Restore stepper — show only current panel, restore nav rows + dots
+      for (let i = 1; i <= TOTAL; i++) {
+        document.getElementById('panel-' + i).hidden = (i !== current);
+        const navRow = document.getElementById('panel-' + i).querySelector('.nav-row');
+        if (navRow) navRow.style.display = '';
+      }
+      dots.style.opacity = '';
+      dots.style.pointerEvents = '';
+      btn.textContent = 'Show All';
+      btn.setAttribute('aria-label', 'Show all steps');
+      document.getElementById('step-announce').textContent = 'Returned to step by step view. Step ' + current + ' of ' + TOTAL + ': ' + TITLES[current];
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function goTo(n) {
+    if (showAll) return; // dots do nothing in show-all mode
+    document.getElementById('panel-' + current).hidden = true;
+    document.getElementById('panel-' + n).hidden = false;
+
+    for (let i = 1; i <= TOTAL; i++) {
+      const d = document.getElementById('dot-' + i);
+      d.className = 'dot' + (i < n ? ' done' : i === n ? ' active' : '');
+      d.setAttribute('aria-current', i === n ? 'step' : 'false');
+    }
+
+    document.getElementById('step-announce').textContent =
+      'Step ' + n + ' of ' + TOTAL + ': ' + TITLES[n];
+
+    const heading = document.getElementById('title-' + n);
+    if (heading) { heading.setAttribute('tabindex', '-1'); heading.focus(); }
+
+    current = n;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function switchPlatform(platform, btn) {
+    const tabs = document.querySelectorAll('#ptabs .tab-btn');
+    tabs.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    const macPanel = document.getElementById('p-mac');
+    const winPanel = document.getElementById('p-win');
+    if (platform === 'mac') { macPanel.hidden = false; winPanel.hidden = true; }
+    else { macPanel.hidden = true; winPanel.hidden = false; }
+  }
+
+  function copyText(srcId, btnId) {
+    const text = document.getElementById(srcId).textContent.trim();
+    const btn = document.getElementById(btnId);
+    navigator.clipboard.writeText(text).then(() => {
+      btn.innerHTML = '<svg width="12" height="12" aria-hidden="true" focusable="false"><use href="#i-check"/></svg> Copied';
+      document.getElementById('copy-announce').textContent = 'URL copied to clipboard';
+      setTimeout(() => {
+        btn.innerHTML = '<svg width="12" height="12" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg> Copy';
+        document.getElementById('copy-announce').textContent = '';
+      }, 2000);
+    });
+  }
+
+  document.getElementById('dots').addEventListener('keydown', e => {
+    if (showAll) return;
+    if (!['ArrowRight','ArrowLeft','Home','End'].includes(e.key)) return;
+    e.preventDefault();
+    if (e.key === 'ArrowRight' && current < TOTAL) goTo(current + 1);
+    if (e.key === 'ArrowLeft'  && current > 1)     goTo(current - 1);
+    if (e.key === 'Home') goTo(1);
+    if (e.key === 'End')  goTo(TOTAL);
+  });
+</script>
+</body>
+</html>
