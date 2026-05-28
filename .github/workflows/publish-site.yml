@@ -1,0 +1,45 @@
+name: Publish Site
+
+on:
+  push:
+    branches:
+      - main
+      - HOL-1370-upload-site-to-s3
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  upload-site:
+    name: Upload site to S3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ARTIFACTS_PUBLISHER_RELEASE_ARN }}
+          aws-region: us-east-1
+
+      - name: Guard against protected filenames
+        shell: bash
+        run: |
+          set -euo pipefail
+          for protected in holokai-desktop-latest.dmg holokai-desktop-latest.exe; do
+            if [ -f "site/${protected}" ]; then
+              echo "ERROR: site/${protected} would overwrite a protected key in the download bucket. Remove it from site/ and try again."
+              exit 1
+            fi
+          done
+
+      - name: Upload site to download bucket
+        shell: bash
+        run: |
+          set -euo pipefail
+          aws s3 sync site/ s3://holokai-downloads-2aa62e5b/
